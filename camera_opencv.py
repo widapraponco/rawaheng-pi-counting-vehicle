@@ -3,11 +3,11 @@ from base_camera import BaseCamera
 
 
 class Camera(BaseCamera):
-    video_source = 0
+    video_source = "../Assets/taffic_test.mp4"
 
     @staticmethod
     def set_video_source(source):
-        Camera.video_source = source
+       Camera.video_source = source
 
     @staticmethod
     def frames():

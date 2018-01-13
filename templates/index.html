@@ -1,9 +1,75 @@
 <html>
   <head>
-    <title>Video Streaming Demonstration</title>
+    <title>Test Counting Vehicle</title>
   </head>
   <body>
-    <h1>Video Streaming Demonstration</h1>
-    <img src="{{ url_for('video_feed') }}">
+    <h1>Alat Hitung Kendaraan Keluar Rawaheng</h1>
+    <img src="{{ url_for('video_feed') }}"/>
+    <script type="text/javascript">
+    let url = "/get_data"
+    function getCounter(url)
+    {
+	fetch(url).then(function(response){
+		return response.text()
+	}).then(function(text){
+		console.log("data:"+text)
+                text = text.split("|")
+		document.querySelector("div#counter_total").innerHTML = "Jumlah kendaraan keluar: "+text[0]
+                document.querySelector("div#counter_inaday").innerHTML = "Kendaraan keluar hari ini: "+text[1]  
+		document.querySelector("div#time").innerHTML = "Tanggal, Waktu: "+text[2]
+	})
+    }
+    
+    window.onload = function(){
+	fetch(url).then(function(response){
+		return response.text()
+	}).then(function(text){
+		console.log("data:"+text)
+		text = text.split("|")
+		document.querySelector("div#counter").innerHTML = "Vehicle out: "+text[0]
+		document.querySelector("div#time").innerHTML = "Current Time: "+text[1]
+	})
+	window.setInterval(getCounter.bind(null, url), 1000)
+    }
+    </script>
+    <!-- <script type="text/javascript">
+    let url = "/get_time"
+    function getTime(url)
+    {
+        fetch(url).then(function(response){
+                return response.text()
+        }).then(function(text){
+                console.log("time:"+text)
+                document.querySelector("div#time").innerHTML = "Current Time: " + text
+        })
+    }
+
+    window.onload = function(){
+        fetch(url).then(function(response){
+                return response.text()
+        }).then(function(text){
+                console.log("time:"+text)
+                document.querySelector("div#time").innerHTML = "Current Time: " + text
+        })
+        window.setInterval(getTime.bind(null, url), 1000)
+    }
+    </script> -->
+    <!--
+    <script type="text/javascript">
+	n = new Date();
+	y = n.getFullYear();
+	m = n.getMonth() + 1;
+	d = n.getDate();
+	
+	h = ("0"+n.getHours()+1).slice(-2);
+	min = ("0"+n.getMinutes()+1).slice(-2);
+	s = ("0"+n.getSeconds()+1).slice(-2);
+	document.querySelector("div#date").innerHTML = "Current Time: " + h + ":" + min + "-" + m + "/" + d + "/" + y;
+    </script>
+    <div id="date"></div></h2>
+    -->
+    <h2><div id="time"></div></h2>
+    <h2><div id="counter_total"></div></h2>
+    <h2><div id="counter_inaday"></div></h2>
   </body>
 </html>

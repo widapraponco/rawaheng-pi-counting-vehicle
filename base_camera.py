@@ -1,5 +1,6 @@
 import time
 import threading
+#from data_manager import JSONDataManager
 try:
     from greenlet import getcurrent as get_ident
 except ImportError:
@@ -62,6 +63,9 @@ class BaseCamera(object):
         if BaseCamera.thread is None:
             BaseCamera.last_access = time.time()
 
+            #init json data manager
+            #self.jsonData = JSONDataManager()
+
             # start background frame thread
             BaseCamera.thread = threading.Thread(target=self._thread)
             BaseCamera.thread.start()
@@ -69,6 +73,9 @@ class BaseCamera(object):
             # wait until frames are available
             while self.get_frame() is None:
                 time.sleep(0)
+    
+    #def get_json_data_manager(self):
+    #    return self.jsonData
 
     def get_frame(self):
         """Return the current camera frame."""
@@ -79,9 +86,8 @@ class BaseCamera(object):
         BaseCamera.event.clear()
 
         return BaseCamera.frame
-
-    @staticmethod
-    def frames():
+    
+    def frames(self):
         """"Generator that returns frames from the camera."""
         raise RuntimeError('Must be implemented by subclasses.')
 
@@ -89,7 +95,7 @@ class BaseCamera(object):
     def _thread(cls):
         """Camera background thread."""
         print('Starting camera thread.')
-        frames_iterator = cls.frames()
+        frames_iterator = cls.frames(cls)
         for frame in frames_iterator:
             BaseCamera.frame = frame
             BaseCamera.event.set()  # send signal to clients
@@ -97,8 +103,8 @@ class BaseCamera(object):
 
             # if there hasn't been any clients asking for frames in
             # the last 10 seconds then stop the thread
-            if time.time() - BaseCamera.last_access > 10:
-                frames_iterator.close()
-                print('Stopping camera thread due to inactivity.')
-                break
+            # if time.time() - BaseCamera.last_access > 10:
+                #frames_iterator.close()
+                #print('Stopping camera thread due to inactivity.')
+                #break
         BaseCamera.thread = None
