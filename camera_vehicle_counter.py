@@ -34,7 +34,7 @@ class Camera(BaseCamera):
     def frames(self):
         jsonData = JSONDataManager()
         jsonData.set_init_last_mail()
-        camera = cv2.VideoCapture(0) #"/share/Video_Test.avi")
+        camera = cv2.VideoCapture("/home/pi/drive/2018/1/13/video_13.avi")
         #camera.set(3, 1920)
         #camera.set(4, 1080)
 
@@ -53,7 +53,7 @@ class Camera(BaseCamera):
         DIVIDER1 = (DIVIDER1_A, DIVIDER1_B) = ((length // 5, height//2-50), (length - (length//5), height//2-50))
         #counter line 
         DIVIDER2 = (DIVIDER2_A, DIVIDER2_B) = ((50, height//5-20), (length // 6, 30))
-        #DIVIDER3 = (DIVIDER3_A, DIVIDER3_B) = ((int(length / 3) * 2, height), (int(length / 3 * 2), 290))
+        DIVIDER3 = (DIVIDER3_A, DIVIDER3_B) = ((70, height//4-20), (length // 2, 40))
         #DIVIDER4 = (DIVIDER4_A, DIVIDER4_B) = ((int(length / 6), 250), (int(length / 6), 140))
         #DIVIDER5 = (DIVIDER5_A, DIVIDER5_B) = ((int(length / 3), 250), (int(length / 3), 140))
         #DIVIDER6 = (DIVIDER6_A, DIVIDER6_B) = ((int(length / 5 * 4), 250), (int(length / 5 * 4), 140))
@@ -85,7 +85,7 @@ class Camera(BaseCamera):
                out.write(img)
 
                if self.car_counter is None:
-                   self.car_counter = VehicleCounter(img.shape[:2], DIVIDER1, DIVIDER2) #, DIVIDER2, DIVIDER3, DIVIDER4, DIVIDER5, DIVIDER6)
+                   self.car_counter = VehicleCounter(img.shape[:2], DIVIDER1, DIVIDER2, DIVIDER3) #, DIVIDER2, DIVIDER3, DIVIDER4, DIVIDER5, DIVIDER6)
 
                # Camera.process_frame(img, DIVIDER1, DIVIDER2, DIVIDER3, DIVIDER4, DIVIDER5, DIVIDER6) 
                
@@ -93,9 +93,12 @@ class Camera(BaseCamera):
                cv2.line(img, DIVIDER1_A, DIVIDER1_B, self.DIVIDER_COLOUR, 1)
                cv2.putText(normal_image, ("%s" % get_current_timestamp_str('%Y-%m-%d %H:%M:%S %Z')), (20, 20)
                   , cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 2)
+               cv2.putText(img, ("%s" % get_current_timestamp_str('%Y-%m-%d %H:%M:%S %Z')), (20, 20)
+                  , cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 2)
                
                #counter line
                cv2.line(img, DIVIDER2_A, DIVIDER2_B, (0, 0, 255), 1)
+               cv2.line(img, DIVIDER3_A, DIVIDER3_B, (0, 0, 255), 1)
                #cv2.line(img, DIVIDER3_A, DIVIDER3_B, self.DIVIDER_COLOUR, 1)
                #cv2.line(img, DIVIDER4_A, DIVIDER4_B, self.DIVIDER_COLOUR, 1)
                #cv2.line(img, DIVIDER5_A, DIVIDER5_B, self.DIVIDER_COLOUR, 1)
