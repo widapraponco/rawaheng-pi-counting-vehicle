@@ -54,11 +54,11 @@ class Camera(BaseCamera):
                print ('no frame')
 
         #capture line
-        DIVIDER1 = (DIVIDER1_A, DIVIDER1_B) = ((length // 5, height//2-50), (length - (length//5), height//2-50))
+        DIVIDER1 = (DIVIDER1_A, DIVIDER1_B) = ((length // 5, height//2-30), (length - (length//5), height//2-30))
         #counter line 
         DIVIDER2 = (DIVIDER2_A, DIVIDER2_B) = ((50, height//5-20), (length // 6, 30))
         DIVIDER3 = (DIVIDER3_A, DIVIDER3_B) = ((70, height//4), (length // 2, 40))
-        DIVIDER4 = (DIVIDER4_A, DIVIDER4_B) = ((70, height//4 + 20), (length//2 + 100, height//4+10))
+        DIVIDER4 = (DIVIDER4_A, DIVIDER4_B) = ((70, height//4 + 30), (length//2 + 100, height//4+10))
         #DIVIDER5 = (DIVIDER5_A, DIVIDER5_B) = ((int(length / 3), 250), (int(length / 3), 140))
         #DIVIDER6 = (DIVIDER6_A, DIVIDER6_B) = ((int(length / 5 * 4), 250), (int(length / 5 * 4), 140))
 
