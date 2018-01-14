@@ -43,24 +43,24 @@ if len(sys.argv) > 2 and sys.argv[1] == 'json' and sys.argv[2] == 'reset-day':
         jsonfile.truncate()
         print(data)
 
-if len(sys.argv) > 2 and sys.argv[1] == 'json' and sys.argv[2] == 'calculate' and sys.argv[3] == 'day':
+if len(sys.argv) > 2 and sys.argv[1] == 'json' and sys.argv[2] == 'calculate':
    with open('/home/pi/Projects/flask-video-streaming/counter.json', 'r+') as jsonfile:
         data = json.load(jsonfile)
         big_inaday = data["big"]["inaday"]
         small_inaday = data["small"]["inaday"]
 
-        if sys.argv[3] is not None:
-           small_inaday["total"] += small_inaday["report"]
-           big_inaday["total"] += big_inaday["report"]
-           #reset inaday report
-           small_inaday["report"] = 0
-           big_inaday["report"] = 0
-        else:
+        if len(sys.argv) > 3 and sys.argv[3] == 'day':
            data["big"]["total"]+=big_inaday["total"]
            data["small"]["total"]+=small_inaday["total"]
            #reset inaday total
            big_inaday["total"] = 0
            small_inaday["total"] = 0
+        else:
+           small_inaday["total"] += small_inaday["report"]
+           big_inaday["total"] += big_inaday["report"]
+           #reset inaday report
+           small_inaday["report"] = 0
+           big_inaday["report"] = 0
 
         jsonfile.seek(0)
         json.dump(data, jsonfile)
@@ -96,13 +96,14 @@ class JSONDataManager():
 
       def get_row(self):
           row = []
-          with open(self.dataFile,'w') as jsonfile:
+          print(self.dataFile)
+          with open(self.dataFile) as jsonfile:
                   data = json.load(jsonfile)
                   start_row = data["big"]["inaday"]["total"] + data["small"]["inaday"]["total"]
                   if start_row == 0:
                      start_row = 1
                   end_row = start_row + (data["big"]["inaday"]["report"]+data["small"]["inaday"]["report"])
-                  row = (start_row, end_row)
+                  row = [start_row, end_row]
           return row
 
       def get_total(self, jsonobj=None):
@@ -138,8 +139,9 @@ class JSONDataManager():
           return count
       
       def get_last_mail(self):
-          last_mail = 0
-          with open(self.dataFile, 'r+') as feedjson:
+          last_mail = ""
+          print(self.dataFile)
+          with open(self.dataFile) as feedjson:
                data = json.load(feedjson)
                last_mail = data["metadata"]["last_mail"]
 
@@ -157,9 +159,9 @@ class JSONDataManager():
       def counting(self, tipe, adder = 1):
           with open(self.dataFile, 'r+') as feedjson:
                data = json.load(feedjson)
-               json_obj = "big"
+               json_obj = "small"
                if tipe == 1:
-                  json_obj = "small"
+                  json_obj = "big"
                count = data[json_obj]["inaday"]["total"]+data[json_obj]["inaday"]["report"]
                #print("counter_before"+count)
                count = count + adder

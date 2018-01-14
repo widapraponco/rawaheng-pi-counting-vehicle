@@ -60,12 +60,10 @@ if args.bcc:
         bcc_str += ','
      bcc_str += b
 
-#Open the csv file
-reader = csv.reader(open(file_dir))
 jsonData = JSONDataManager()
 #write the HTML in string
 #msg_body = "<title>Laporan Berkala Tambang Batu Rawaheng</title>"
-msg_body = "<body><p>"+jsonData.get_last_mail()+"-"+time.strftime('%A %B, %d %Y %H:%M:%S')+"</p>"
+msg_body = "<body><p>"+jsonData.get_last_mail()+"-"+time.strftime('%Y/%m/%d %H:%M:%S')+"</p>"
 if args.flag:
    msg_body = "<body><p>"+time.strftime('%A %B, %d %Y %H:%M:%S')+"</p>"
 
@@ -73,12 +71,14 @@ msg_body += "<table style='border: 1px solid black;'>"
 
 #start from data not header
 start_row = 1
-end_row = len(reader)
+end_row = sum(1 for row in csv.reader(file_dir))
+#print("jumlah row "+str(end_row))
 if args.row is not None:
    start_row = args.row[0]
    end_row = args.row[1]
 else:
    rows = jsonData.get_row()
+   #print(rows)
    start_now = rows[0]
    end_row = rows[1]
 
@@ -92,11 +92,12 @@ for h in header:
     msg_body+="<th>"+h.upper()+"</th>"
 msg_body += "</tr>"
 
+reader = csv.reader(open(file_dir))
 for i, row in enumerate(reader):
     if i < 1 or (i < start_row or  i >= end_row):
        continue
  
-    if start_row%2 :
+    if i%2 :
        msg_body += '<tr style="background-color: grey;">'
     else:
        msg_body += '<tr style="background-color: white;">'
@@ -115,8 +116,8 @@ for i, row in enumerate(reader):
     msg_body += "</tr>"
 
 msg_body += "</table><br>"
-msg_body += "<p>Total tipe big:"+big_count+"<p><br>"
-msg_body += "<p>Total tipe small:"+small_count+"<p><br>"
+msg_body += "<p>Total tipe big:"+str(big_count)+"<br>"
+msg_body += "Total tipe small:"+str(small_count)+"</p><br>"
 #video link here
 if args.link is not None: 
    msg_body += "<p>berikut tautan gambar kendaraan dan video pada tanggal ini di laman google drive: "+args.link+"</body>"

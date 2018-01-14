@@ -44,7 +44,7 @@ class Vehicle(object):
         self.width = centroid.w
         
         #define big or small vehicle here
-        self.type = VehicleType.small
+        self.type = VehicleType.small.name
         if self.width > 100 or self.height > 200:
            self.type = VehicleType.big.name
 
@@ -202,23 +202,27 @@ class VehicleCounter(object):
             #counter line
             if not vehicle.counted1 and len(vehicle.positions) > 1:
                 line_y_last = (vehicle.positions[-1][0]-self.divider2a_x)/(self.divider2b_x-self.divider2a_x)*(self.divider2b_y - self.divider2a_y)+self.divider2a_y
-                line_y_last2 = (vehicle.positions[0][0]-self.divider2a_x)/(self.divider2b_x-self.divider2a_x)*(self.divider2b_y - self.divider2a_y)+self.divider2a_y
+                line_y_last2 = (vehicle.positions[-2][0]-self.divider2a_x)/(self.divider2b_x-self.divider2a_x)*(self.divider2b_y - self.divider2a_y)+self.divider2a_y
                 #through the line
-                #print(vehicle.positions[-1][1])
-                #print(line_y_last)
-                #print(vehicle.positions[0][1])
-                #print(line_y_last2)   
-                if vehicle.positions[-1][1] > line_y_last and vehicle.positions[0][1] < line_y_last2:
-                   #print("vehicle counted")
-                   #print vehicle.last_position
-                   self.vehicle_count1 += 1
-                   vehicle.counted1 = True
+                vehicle.counted1 = (vehicle.positions[-1][1] > line_y_last and vehicle.positions[-2][1] < line_y_last2)
+               
+            #if not vehicle.counted1 and len(vehicle.positions) > 1:
+                #cek counter line 2
+                if not vehicle.counted1:
+                   line_y_last = (vehicle.positions[-1][0]-self.divider3a_x)/(self.divider3b_x-self.divider3a_x)*(self.divider3b_y - self.divider3a_y)+self.divider3a_y
+                   line_y_last2 = (vehicle.positions[-2][0]-self.divider3a_x)/(self.divider3b_x-self.divider3a_x)*(self.divider3b_y - self.divider3a_y)+self.divider3a_y
+                   vehicle.counted1 = (vehicle.positions[-1][1] > line_y_last and vehicle.positions[-2][1] < line_y_last2)
 
-                   #save to csv data
-                   vehicle.timestamp = get_current_timestamp_str('%Y-%m-%d %H:%M:%S %Z')
-                   vehicle.order = last_count
-                   self.data_manager.add_row(vehicle)
-                   self.jsonData.counting(vehicle.type)
+                #cek counter line 3
+                if not vehicle.counted1:
+                   line_y_last = (vehicle.positions[-1][0]-self.divider4a_x)/(self.divider4b_x-self.divider4a_x)*(self.divider4b_y - self.divider4a_y)+self.divider4a_y
+                   line_y_last2 = (vehicle.positions[-2][0]-self.divider4a_x)/(self.divider4b_x-self.divider4a_x)*(self.divider4b_y - self.divider4a_y)+self.divider4a_y
+                   vehicle.counted1 = vehicle.positions[-1][1] > line_y_last and vehicle.positions[-2][1] < line_y_last2
+                      
+                #already counted
+                if vehicle.counted1:
+                   self.vehicle_count1 += 1
+                   self.save_to_csv(vehicle, last_count)
 
             #capture line
             if vehicle.counted1 and len(vehicle.positions) > 1 and (vehicle.positions[-1][0] > self.divider1a_x and vehicle.positions[-1][0] < self.divider1b_x) and vehicle.positions[-1][1] > self.divider1a_y > vehicle.positions[0][1]:
@@ -226,7 +230,7 @@ class VehicleCounter(object):
                 now = get_server_time()
                 name = str(vehicle.id)+"_H"+str(now.hour)+"M"+str(now.minute)
                 
-                 #frame will be captured
+                #frame will be captured
                 img_capture = output_image
                 if normal_image is not None:
                    img_capture = normal_image
@@ -275,3 +279,10 @@ class VehicleCounter(object):
             if not v.frames_since_seen >= self.max_unseen_frames ]
         for id in removed:
             break
+
+    def save_to_csv(self, vehicle, last_count):
+        #save to csv data
+        vehicle.timestamp = get_current_timestamp_str('%Y-%m-%d %H:%M:%S %Z')
+        vehicle.order = last_count+1
+        self.data_manager.add_row(vehicle)
+        self.jsonData.counting(vehicle.type)
